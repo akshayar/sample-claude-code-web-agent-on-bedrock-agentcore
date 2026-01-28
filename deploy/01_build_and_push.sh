@@ -57,8 +57,15 @@ aws ecr get-login-password --region "${AWS_REGION}" | \
 echo -e "${GREEN}✓${NC} Logged into ECR"
 
 echo -e "${YELLOW}Building Docker image for ARM64 architecture...${NC}"
-docker build --platform linux/arm64 -t "${FULL_IMAGE_NAME}" -f "${SCRIPT_DIR}/Dockerfile" "${SCRIPT_DIR}/.."
+
+# Setup buildx if not already done
+docker buildx create --name multiarch --use 2>/dev/null || docker buildx use multiarch
+
+# Build for ARM64
+docker buildx build --platform linux/arm64 -t "${FULL_IMAGE_NAME}" -f "${SCRIPT_DIR}/Dockerfile" "${SCRIPT_DIR}/.." --load
+
 echo -e "${GREEN}✓${NC} Docker image built (ARM64)"
+
 
 echo -e "${YELLOW}Pushing image to ECR...${NC}"
 docker push "${FULL_IMAGE_NAME}"

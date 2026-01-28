@@ -1,5 +1,5 @@
 # Use Node.js Trixie as base image
-FROM node:trixie-slim
+FROM --platform=linux/arm64 node:trixie-slim
 
 # Add uv to PATH
 ENV PATH="/root/.local/bin:${PATH}"
